@@ -9,22 +9,29 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-        - uses: cgs-earth/onto-to-pages@main
+      - uses: cgs-earth/onto-to-pages@main
+        with:
+          deploy: false
+          baseuri: https://benwebb.com/${{ github.event.repository.name }}
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
